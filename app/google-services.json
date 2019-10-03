@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "819661099574",
+    "firebase_url": "https://chat-mate-39d64.firebaseio.com",
+    "project_id": "chat-mate-39d64",
+    "storage_bucket": "chat-mate-39d64.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:819661099574:android:247a7ee062a894991bbe97",
+        "android_client_info": {
+          "package_name": "com.bliss.chatmate"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "819661099574-pv0poahi7cno938ju4i6s6uu31gtt1m0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB_TLr2rhrHHPj9dKaChBHBWvqCzIkMFlY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "819661099574-pv0poahi7cno938ju4i6s6uu31gtt1m0.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

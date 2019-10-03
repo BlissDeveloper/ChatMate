@@ -1,3 +1,15 @@
 <resources>
     <string name="app_name">Chat Mate</string>
+
+    <!-- Hints -->
+    <string name="hint_email">Email</string>
+    <string name="hint_password">Password</string>
+    <string name="hint_submit">Submit</string>
+    <string name="hint_confirm_password">Confirm Password</string>
+    <string name="hint_mobile_number">Mobile Number</string>
+    <string name="hint_dont_have_an_account">Don\'t have an account yet?</string>
+    <string name="hint_area_code">+63</string>
+    <string name="hint_verification_code">Verification Code</string>
+    <string name="hint_send_code">Send Verification Code</string>
+    <string name="title_phone_reg_activity">Verify Your Phone Number</string>
 </resources>

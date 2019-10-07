@@ -3,6 +3,8 @@ package com.bliss.chatmate.Utils;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.text.TextUtils;
+import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
 
@@ -10,6 +12,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import com.bliss.chatmate.Activities.SplashScreenActivity;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MyUtils {
 
@@ -53,6 +58,30 @@ public class MyUtils {
         for (Button button : buttons) {
             button.setVisibility(View.VISIBLE);
             button.setEnabled(true);
+        }
+    }
+
+    public static boolean isEmailValid(String email) {
+        return Patterns.EMAIL_ADDRESS.matcher(email).matches();
+    }
+
+    public static boolean areStringsEmpty(String... strings) {
+        List<Boolean> booleanList = new ArrayList<>();
+        for (String string : strings) {
+            booleanList.add(TextUtils.isEmpty(string));
+        }
+        if (booleanList.contains(true) && booleanList.contains(false)) {
+            //Merong may laman, merong wala
+            return true;
+        } else if (booleanList.contains(true) && !booleanList.contains(false)) {
+            //p v ~q
+            //May laman lahat
+            return false;
+        } else if (booleanList.contains(false) && !booleanList.contains(true)) {
+            //Walang laman lahat
+            return true;
+        } else {
+            return true;
         }
     }
 }

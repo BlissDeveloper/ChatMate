@@ -34,7 +34,6 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-
         //Hide the button on start:
         MyUtils.hideViews(buttonLogin);
     }

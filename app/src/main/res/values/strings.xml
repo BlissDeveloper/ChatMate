@@ -11,5 +11,5 @@
     <string name="hint_area_code">+63</string>
     <string name="hint_verification_code">Verification Code</string>
     <string name="hint_send_code">Send Verification Code</string>
-    <string name="title_phone_reg_activity">Verify Your Phone Number</string>
+    <string name="title_phone_reg_activity">Create an Account</string>
 </resources>

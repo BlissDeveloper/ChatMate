@@ -6,6 +6,7 @@ import androidx.appcompat.widget.Toolbar;
 
 import android.os.Bundle;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.MenuItem;
@@ -22,10 +23,10 @@ import com.google.firebase.auth.PhoneAuthProvider;
 import java.util.concurrent.TimeUnit;
 
 public class RegisterActivity extends AppCompatActivity {
-    private EditText editTextIncompletePhoneNumber;
-    private EditText editTextVerificationCode;
-    private Button buttonSendCode;
-    private Button buttonSubmitPhoneNumber;
+    private EditText editTextRegisterEmail;
+    private EditText editTextPassword;
+    private EditText editTextConfirmPassword;
+    private Button buttonSubmitRegistration;
     private Toolbar toolbarRegisterActivity;
 
     private String title;
@@ -42,13 +43,12 @@ public class RegisterActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
 
-        editTextIncompletePhoneNumber = findViewById(R.id.editTextIncompleteNumber);
-        editTextVerificationCode = findViewById(R.id.editTextVerificationCode);
-        buttonSendCode = findViewById(R.id.buttonSendVerificationCode);
-        buttonSubmitPhoneNumber = findViewById(R.id.buttonSubmitPhoneNumber);
+        editTextRegisterEmail = findViewById(R.id.editTextRegisterEmail);
+        editTextPassword = findViewById(R.id.editTextRegisterPassword);
+        editTextConfirmPassword = findViewById(R.id.editTextRegisterConfirmPassword);
+        buttonSubmitRegistration = findViewById(R.id.buttonSubmitRegistration);
         toolbarRegisterActivity = findViewById(R.id.toolbarRegisterPhone);
 
-        areaCode = getString(R.string.hint_area_code);
         title = getString(R.string.title_phone_reg_activity);
 
         //Toolbar Setup
@@ -58,15 +58,13 @@ public class RegisterActivity extends AppCompatActivity {
         initEditTextTextChangedListener();
 
         //Button Click Listeners
-        buttonSendCode.setOnClickListener(setUpClickListener());
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-
         //Hide buttons on start
-        MyUtils.hideButtons(buttonSendCode, buttonSubmitPhoneNumber);
+        MyUtils.hideButtons(buttonSubmitRegistration);
     }
 
     @Override
@@ -80,6 +78,73 @@ public class RegisterActivity extends AppCompatActivity {
         }
     }
 
+    public Button.OnClickListener setUpClickListener() {
+        Button.OnClickListener clickListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                switch (view.getId()) {
+                    case R.id.buttonSubmitRegistration:
+
+                        break;
+                    default:
+                        break;
+                }
+            }
+        };
+        return clickListener;
+    }
+
+    public void initEditTextTextChangedListener() {
+        editTextRegisterEmail.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                String incompleteNumber = charSequence.toString().trim();
+                String password = editTextPassword.getText().toString();
+                String password2 = editTextConfirmPassword.getText().toString();
+                int len = incompleteNumber.length();
+                if (len < 9 || TextUtils.isEmpty(password) || TextUtils.isEmpty(password2)) {
+                    MyUtils.hideButtons(buttonSubmitRegistration);
+                } else {
+                    MyUtils.showButtons(buttonSubmitRegistration);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
+
+        editTextPassword.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                String email = charSequence.toString();
+                boolean isValid = MyUtils.isEmailValid(email);
+                if (!isValid) {
+                    MyUtils.hideButtons(buttonSubmitRegistration);
+                } else {
+                    MyUtils.showButtons(buttonSubmitRegistration);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
+    }
+
+    /*
     public void sendCode() {
         completePhoneNumber = "+63" + editTextIncompletePhoneNumber.getText().toString().trim();
 
@@ -91,7 +156,7 @@ public class RegisterActivity extends AppCompatActivity {
 
             @Override
             public void onVerificationFailed(@NonNull FirebaseException e) {
-
+                Log.e(TAG, e.getMessage());
             }
         };
 
@@ -105,49 +170,5 @@ public class RegisterActivity extends AppCompatActivity {
                 verifyCallback
         );
     }
-
-    public Button.OnClickListener setUpClickListener() {
-        Button.OnClickListener clickListener = new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                switch (view.getId()) {
-                    case R.id.buttonSendVerificationCode:
-                        MyUtils.hideButtons(buttonSendCode);
-                        sendCode();
-                        break;
-                    case R.id.buttonSubmitPhoneNumber:
-
-                        break;
-                    default:
-                        break;
-                }
-            }
-        };
-        return clickListener;
-    }
-
-    public void initEditTextTextChangedListener() {
-        editTextIncompletePhoneNumber.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                String incompleteNumber = charSequence.toString().trim();
-                int len = incompleteNumber.length();
-                if (len < 9) {
-                    MyUtils.hideButtons(buttonSendCode);
-                } else {
-                    MyUtils.showButtons(buttonSendCode);
-                }
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-
-            }
-        });
-    }
+     */
 }

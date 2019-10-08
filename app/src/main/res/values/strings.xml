@@ -12,4 +12,12 @@
     <string name="hint_verification_code">Verification Code</string>
     <string name="hint_send_code">Send Verification Code</string>
     <string name="title_phone_reg_activity">Create an Account</string>
+
+    <!-- Error Messages -->
+    <string name="error_email_invalid">Email is invalid.</string>
+    <string name="error_email_required">Email is required.</string>
+    <string name="error_password_required">Password is required</string>
+    <string name="error_password_confirmation_required">Password confirmation is required.</string>
+    <string name="error_password_mismatch">Passwords do not match.</string>
+    <string name="error_password_invalid">Password must be at least 6 characters.</string>
 </resources>

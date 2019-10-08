@@ -7,11 +7,13 @@ import android.text.TextUtils;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import com.bliss.chatmate.Activities.SplashScreenActivity;
+import com.bliss.chatmate.Models.EditTextErrorMessageImplementation;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -76,12 +78,20 @@ public class MyUtils {
         } else if (booleanList.contains(true) && !booleanList.contains(false)) {
             //p v ~q
             //May laman lahat
-            return false;
+            return true;
         } else if (booleanList.contains(false) && !booleanList.contains(true)) {
             //Walang laman lahat
-            return true;
+            return false;
         } else {
             return true;
+        }
+    }
+
+    public static void showErrorMessages(List<EditTextErrorMessageImplementation> errorList) {
+        for (EditTextErrorMessageImplementation errorMessage : errorList) {
+            EditText editText = errorMessage.getEditText();
+            String message = errorMessage.getErrorMessage();
+            editText.setError(message);
         }
     }
 }

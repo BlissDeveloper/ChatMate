@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -14,12 +15,15 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.bliss.chatmate.Models.EditTextErrorMessageImplementation;
 import com.bliss.chatmate.R;
 import com.bliss.chatmate.Utils.MyUtils;
 import com.google.firebase.FirebaseException;
 import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthProvider;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public class RegisterActivity extends AppCompatActivity {
@@ -34,6 +38,9 @@ public class RegisterActivity extends AppCompatActivity {
     private String areaCode = null;
     private String completePhoneNumber = null;
     private final String TAG = "Avery";
+
+    //Click Listener
+    private Button.OnClickListener clickListener;
 
     //Callbacks
     private PhoneAuthProvider.OnVerificationStateChangedCallbacks verifyCallback;
@@ -58,6 +65,7 @@ public class RegisterActivity extends AppCompatActivity {
         initEditTextTextChangedListener();
 
         //Button Click Listeners
+        
     }
 
     @Override
@@ -84,7 +92,7 @@ public class RegisterActivity extends AppCompatActivity {
             public void onClick(View view) {
                 switch (view.getId()) {
                     case R.id.buttonSubmitRegistration:
-
+                        goTo();
                         break;
                     default:
                         break;
@@ -103,15 +111,11 @@ public class RegisterActivity extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                String incompleteNumber = charSequence.toString().trim();
                 String password = editTextPassword.getText().toString();
                 String password2 = editTextConfirmPassword.getText().toString();
-                int len = incompleteNumber.length();
-                if (len < 9 || TextUtils.isEmpty(password) || TextUtils.isEmpty(password2)) {
-                    MyUtils.hideButtons(buttonSubmitRegistration);
-                } else {
-                    MyUtils.showButtons(buttonSubmitRegistration);
-                }
+                String email = charSequence.toString();
+
+                executeValidations(email, password, password2);
             }
 
             @Override
@@ -128,13 +132,32 @@ public class RegisterActivity extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                String email = charSequence.toString();
-                boolean isValid = MyUtils.isEmailValid(email);
-                if (!isValid) {
-                    MyUtils.hideButtons(buttonSubmitRegistration);
-                } else {
-                    MyUtils.showButtons(buttonSubmitRegistration);
-                }
+                String email = editTextRegisterEmail.toString();
+                String password = charSequence.toString();
+                String password2 = editTextConfirmPassword.getText().toString();
+
+                executeValidations(email, password, password2);
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
+
+        editTextConfirmPassword.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                String email = editTextRegisterEmail.toString();
+                String password = editTextPassword.toString();
+                String password2 = charSequence.toString();
+
+                executeValidations(email, password, password2);
             }
 
             @Override
@@ -144,31 +167,46 @@ public class RegisterActivity extends AppCompatActivity {
         });
     }
 
-    /*
-    public void sendCode() {
-        completePhoneNumber = "+63" + editTextIncompletePhoneNumber.getText().toString().trim();
-
-        verifyCallback = new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
-            @Override
-            public void onVerificationCompleted(@NonNull PhoneAuthCredential phoneAuthCredential) {
-
-            }
-
-            @Override
-            public void onVerificationFailed(@NonNull FirebaseException e) {
-                Log.e(TAG, e.getMessage());
-            }
-        };
-
-        Log.d(TAG, "Sending to " + completePhoneNumber);
-
-        PhoneAuthProvider.getInstance().verifyPhoneNumber(
-                completePhoneNumber,
-                60,
-                TimeUnit.SECONDS,
-                RegisterActivity.this,
-                verifyCallback
-        );
+    public void goTo() {
+        String email = editTextRegisterEmail.getText().toString();
+        String password = editTextPassword.getText().toString();
+        Intent intent = new Intent(RegisterActivity.this, ProfileInputActivity.class);
+        intent.putExtra("email", email);
+        intent.putExtra("password", password);
+        startActivity(intent);
     }
-     */
+
+    public void executeValidations(String email, String password, String password2) {
+        if (!TextUtils.isEmpty(email) || !TextUtils.isEmpty(password) || !TextUtils.isEmpty(password2)) {
+            boolean isValid = MyUtils.isEmailValid(email);
+            int passLen = password.length();
+            int pass2Len = password2.length();
+
+            if (isValid || passLen >= 6 || pass2Len >= 6) {
+                MyUtils.showButtons(buttonSubmitRegistration);
+            } else {
+                MyUtils.hideButtons(buttonSubmitRegistration);
+                if (!isValid) {
+                    editTextRegisterEmail.setError(getString(R.string.error_email_invalid));
+                }
+                if (passLen < 6) {
+                    editTextPassword.setError(getString(R.string.error_password_invalid));
+                }
+                if (pass2Len < 6) {
+                    editTextConfirmPassword.setError(getString(R.string.error_password_invalid));
+                }
+            }
+        } else {
+            MyUtils.hideButtons(buttonSubmitRegistration);
+            if (TextUtils.isEmpty(email)) {
+                editTextRegisterEmail.setError(getString(R.string.error_email_required));
+            }
+            if (TextUtils.isEmpty(password)) {
+                editTextPassword.setError(getString(R.string.error_password_required));
+            }
+            if (TextUtils.isEmpty(password2)) {
+                editTextConfirmPassword.setError(getString(R.string.error_password_confirmation_required));
+            }
+        }
+    }
 }

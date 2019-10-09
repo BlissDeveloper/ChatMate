@@ -40,7 +40,7 @@ public class RegisterActivity extends AppCompatActivity {
     private final String TAG = "Avery";
 
     //Click Listener
-    private Button.OnClickListener clickListener;
+    private Button.OnClickListener click;
 
     //Callbacks
     private PhoneAuthProvider.OnVerificationStateChangedCallbacks verifyCallback;
@@ -65,7 +65,8 @@ public class RegisterActivity extends AppCompatActivity {
         initEditTextTextChangedListener();
 
         //Button Click Listeners
-        
+        click = setUpClickListener();
+        buttonSubmitRegistration.setOnClickListener(click);
     }
 
     @Override

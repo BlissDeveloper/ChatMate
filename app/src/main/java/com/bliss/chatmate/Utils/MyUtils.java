@@ -14,11 +14,14 @@ import androidx.appcompat.widget.Toolbar;
 
 import com.bliss.chatmate.Activities.SplashScreenActivity;
 import com.bliss.chatmate.Models.EditTextErrorMessageImplementation;
+import com.theartofdev.edmodo.cropper.CropImage;
+import com.theartofdev.edmodo.cropper.CropImageView;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class MyUtils {
+    public static final String TAG = "TAG";
 
     public MyUtils() {
 
@@ -93,5 +96,11 @@ public class MyUtils {
             String message = errorMessage.getErrorMessage();
             editText.setError(message);
         }
+    }
+
+    public static void openCropper(Activity activity) {
+        CropImage.activity()
+                .setGuidelines(CropImageView.Guidelines.ON)
+                .start(activity);
     }
 }

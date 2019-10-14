@@ -22,6 +22,8 @@ import java.util.List;
 
 public class MyUtils {
     public static final String TAG = "TAG";
+    public static final int DELETE = 0;
+    public static final int ADD = 1;
 
     public MyUtils() {
 
@@ -71,23 +73,15 @@ public class MyUtils {
     }
 
     public static boolean areStringsEmpty(String... strings) {
-        List<Boolean> booleanList = new ArrayList<>();
-        for (String string : strings) {
-            booleanList.add(TextUtils.isEmpty(string));
+        boolean falseHit = false;
+
+        for (String s : strings) {
+            if (!TextUtils.isEmpty(s)) {
+                falseHit = true;
+            }
         }
-        if (booleanList.contains(true) && booleanList.contains(false)) {
-            //Merong may laman, merong wala
-            return true;
-        } else if (booleanList.contains(true) && !booleanList.contains(false)) {
-            //p v ~q
-            //May laman lahat
-            return true;
-        } else if (booleanList.contains(false) && !booleanList.contains(true)) {
-            //Walang laman lahat
-            return false;
-        } else {
-            return true;
-        }
+
+        return falseHit;
     }
 
     public static void showErrorMessages(List<EditTextErrorMessageImplementation> errorList) {

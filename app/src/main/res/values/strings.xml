@@ -24,6 +24,14 @@
     <string name="error_password_confirmation_required">Password confirmation is required.</string>
     <string name="error_password_mismatch">Passwords do not match.</string>
     <string name="error_password_invalid">Password must be at least 6 characters.</string>
+    <string name="error_first_name_req">First name is required.</string>
+    <string name="error_last_name_req">Last name is required.</string>
+    <string name="error_user_name_req">Username is required.</string>
+    <string name="error_user_name_taken">The username is already taken.</string>
+
+    <!-- Regex -->
+    <string name="has_digits_checker">".*\\d.*"</string>
+    <string name="has_special_char_checker">[^a-z0-9 ]</string>
 
     <!-- Activity Toolbar Titles-->
     <string name="title_profile_input">Profile</string>

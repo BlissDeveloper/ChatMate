@@ -1,15 +1,23 @@
 package com.bliss.chatmate.Activities;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.bliss.chatmate.Models.DeniedPermissions;
 import com.bliss.chatmate.R;
 import com.bliss.chatmate.Utils.MyUtils;
 import com.google.android.material.textfield.TextInputEditText;
+
+import java.util.List;
 
 public class LoginActivity extends AppCompatActivity {
     private TextInputEditText editTextMobileNumber;
@@ -17,6 +25,8 @@ public class LoginActivity extends AppCompatActivity {
 
     private Button buttonLogin;
     private TextView textViewGoToRegister;
+
+    private final int PERMISSION_CODE = 69;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,6 +39,8 @@ public class LoginActivity extends AppCompatActivity {
         textViewGoToRegister = findViewById(R.id.textViewDontHaveAnAccount);
 
         attachClickListener();
+
+        checkPermissions();
     }
 
     @Override
@@ -36,6 +48,19 @@ public class LoginActivity extends AppCompatActivity {
         super.onStart();
         //Hide the button on start:
         MyUtils.hideViews(buttonLogin);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if (requestCode == PERMISSION_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Log.d(MyUtils.TAG, "All permissions granted");
+            } else {
+                checkPermissions();
+            }
+        }
     }
 
     public void attachClickListener() {
@@ -56,4 +81,19 @@ public class LoginActivity extends AppCompatActivity {
         };
         return clickListener;
     }
+
+    public void checkPermissions() {
+        DeniedPermissions deniedPermissions = MyUtils.areAllPermissionsGranted(LoginActivity.this,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                Manifest.permission.READ_EXTERNAL_STORAGE);
+
+        if (!deniedPermissions.isAllGranted()) {
+            //Not all permissions are granted:
+            List<String> deniedPerm = deniedPermissions.getPermissions();
+            ActivityCompat.requestPermissions(this,
+                    deniedPerm.toArray(new String[0]), //Converting List to Array Object
+                    PERMISSION_CODE);
+        }
+    }
+
 }

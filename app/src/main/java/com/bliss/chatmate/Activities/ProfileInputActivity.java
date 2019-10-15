@@ -15,15 +15,26 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 
+import com.bliss.chatmate.Callbacks.OnImageUploadSuccess;
+import com.bliss.chatmate.Callbacks.OnRegistrationCallback;
+import com.bliss.chatmate.Models.RegistryParams;
 import com.bliss.chatmate.R;
+import com.bliss.chatmate.Utils.FirebaseUtils;
 import com.bliss.chatmate.Utils.MyUtils;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.firestore.CollectionReference;
 import com.theartofdev.edmodo.cropper.CropImage;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class ProfileInputActivity extends AppCompatActivity {
+public class ProfileInputActivity extends AppCompatActivity implements OnRegistrationCallback {
+    //Firebase
+    //private FirebaseAuth mAuth = FirebaseUtils.firebaseAuth;
+    //private String currentUserID = FirebaseUtils.currentUserID;
+    private CollectionReference usersRef = FirebaseUtils.usersRef;
+
     private CircleImageView circleImageView;
     private FloatingActionButton fabOpenGallery;
     private Toolbar toolbarProfileInput;
@@ -31,9 +42,13 @@ public class ProfileInputActivity extends AppCompatActivity {
     private EditText editTextLastName;
     private EditText editTextUsername;
     private Button buttonSubmitProfileInput;
+    private ProgressBar progressBarProfileInput;
 
     private Uri imageUri = null;
+    private Uri uploadImageUri = null;
     private final int OPEN_GALLERY_CODE = 5;
+
+    private String email = null, password = null;
 
     private Button.OnClickListener click;
 
@@ -49,10 +64,12 @@ public class ProfileInputActivity extends AppCompatActivity {
         editTextLastName = findViewById(R.id.editTextLastName);
         editTextUsername = findViewById(R.id.editTextUserName);
         buttonSubmitProfileInput = findViewById(R.id.buttonSubmitProfileInput);
+        progressBarProfileInput = findViewById(R.id.progressBarProfileInput);
 
         //Click Listener
         click = initiateClickListeners();
         fabOpenGallery.setOnClickListener(click);
+        buttonSubmitProfileInput.setOnClickListener(click);
 
         //Toolbar Setup
         setSupportActionBar(toolbarProfileInput);
@@ -61,6 +78,15 @@ public class ProfileInputActivity extends AppCompatActivity {
 
         //TextWatcher
         initializeTextWatcher();
+
+        //Hide view onCreate
+        MyUtils.hideViews(progressBarProfileInput);
+
+        //Getting email and pass from the Register Activity
+        if (getIntent().hasExtra("email") && getIntent().hasExtra("password")) {
+            email = getIntent().getExtras().getString("email");
+            password = getIntent().getExtras().getString("password");
+        }
     }
 
     @Override
@@ -111,6 +137,8 @@ public class ProfileInputActivity extends AppCompatActivity {
                         }
                         break;
                     case R.id.buttonSubmitProfileInput:
+                        MyUtils.showViews(progressBarProfileInput);
+                        MyUtils.hideViews(buttonSubmitProfileInput);
                         validateInput();
                         break;
                 }
@@ -132,6 +160,48 @@ public class ProfileInputActivity extends AppCompatActivity {
                 String fName = charSequence.toString();
                 String lName = editTextLastName.getText().toString();
                 String uName = editTextUsername.getText().toString();
+
+                editTextValidations(fName, lName, uName);
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
+
+        editTextLastName.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                String fName = editTextFirstName.getText().toString();
+                String lName = charSequence.toString();
+                String uName = editTextUsername.getText().toString();
+
+                editTextValidations(fName, lName, uName);
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
+
+        editTextUsername.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                String fName = editTextFirstName.getText().toString();
+                String lName = editTextLastName.getText().toString();
+                String uName = charSequence.toString();
 
                 editTextValidations(fName, lName, uName);
             }
@@ -180,14 +250,40 @@ public class ProfileInputActivity extends AppCompatActivity {
     }
 
     public void validateInput() {
-        String firstName, lastName, userName;
-        firstName = editTextFirstName.getText().toString();
-        lastName = editTextLastName.getText().toString();
-        userName = editTextUsername.getText().toString();
+        checkIfUserExists();
+    }
 
-        if (!MyUtils.areStringsEmpty(firstName, lastName, userName)) {
+    public void editTextValidations(String fName, String lName, String uName) {
+        String firstName = fName;
+        String lastName = lName;
+        String userName = uName;
+        int firstNameLen = firstName.length();
+        int lastNameLen = lastName.length();
+        int userNameLen = userName.length();
 
+        if (!TextUtils.isEmpty(firstName) || !TextUtils.isEmpty(lastName) || !TextUtils.isEmpty(userName)) {
+            MyUtils.showViews(buttonSubmitProfileInput);
+            if (firstNameLen > 0 && lastNameLen > 0 && userNameLen >= 6) {
+                if (!firstName.matches(getString(R.string.has_digits_checker)) || !lastName.matches(getString(R.string.has_digits_checker))) {
+                    MyUtils.showViews(buttonSubmitProfileInput);
+                } else {
+                    MyUtils.hideViews(buttonSubmitProfileInput);
+                }
+            } else {
+                MyUtils.hideViews(buttonSubmitProfileInput);
+
+                if (firstNameLen <= 0) {
+                    editTextFirstName.setError(getString(R.string.error_first_name_req));
+                }
+                if (lastNameLen <= 0) {
+                    editTextLastName.setError(getString(R.string.error_last_name_req));
+                }
+                if (userNameLen < 6) {
+                    editTextUsername.setError(getString(R.string.error_user_name_req));
+                }
+            }
         } else {
+            MyUtils.hideViews(buttonSubmitProfileInput);
             if (TextUtils.isEmpty(firstName)) {
                 editTextFirstName.setError(getString(R.string.error_first_name_req));
             }
@@ -200,23 +296,27 @@ public class ProfileInputActivity extends AppCompatActivity {
         }
     }
 
-    public void editTextValidations(String fName, String lName, String uName) {
-        String firstName = fName;
-        String lastName = lName;
-        String userName = uName;
-        int firstNameLen = firstName.length();
-        int lastNameLen = lastName.length();
-        int userNameLen = userName.length();
+    public void checkIfUserExists() {
+        RegistryParams registryParams = new RegistryParams(
+                ProfileInputActivity.this,
+                password,
+                email,
+                FirebaseUtils.PROFILE_PICTURES,
+                imageUri
+        );
+        FirebaseUtils.registerUserInFirebaseAuth(registryParams);
+    }
 
-        if (firstNameLen > 0 && lastNameLen > 0 && userNameLen >= 6) {
-            if (!firstName.matches(getString(R.string.has_digits_checker))) {
+    @Override
+    public void onRegistrationSuccess() {
+        Log.d(MyUtils.TAG, "Registration successful!");
+        MyUtils.showViews(buttonSubmitProfileInput);
+        MyUtils.hideViews(progressBarProfileInput);
+    }
 
-            } else {
-                MyUtils.hideViews(buttonSubmitProfileInput);
-            }
-        } else {
-            MyUtils.hideViews(buttonSubmitProfileInput);
-
-        }
+    @Override
+    public void onRegistrationFailed(Exception e) {
+        MyUtils.showViews(buttonSubmitProfileInput);
+        MyUtils.hideViews(progressBarProfileInput);
     }
 }

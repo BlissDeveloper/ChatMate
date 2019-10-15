@@ -38,5 +38,14 @@ dependencies {
 
     //Image Cropper
     api 'com.theartofdev.edmodo:android-image-cropper:2.8.+'
+
+    //Firestore
+    implementation 'com.google.firebase:firebase-firestore:21.1.1'
+
+    //Firebase Storage
+    implementation 'com.google.firebase:firebase-storage:19.1.0'
+
+    //Permission Handler
+    implementation 'com.karumi:dexter:6.0.0'
 }
 apply plugin: 'com.google.gms.google-services'

@@ -1,8 +1,10 @@
 package com.bliss.chatmate.Utils;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.text.TextUtils;
 import android.util.Patterns;
 import android.view.View;
@@ -11,17 +13,28 @@ import android.widget.EditText;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import com.bliss.chatmate.Activities.SplashScreenActivity;
+import com.bliss.chatmate.Models.DeniedPermissions;
 import com.bliss.chatmate.Models.EditTextErrorMessageImplementation;
+import com.karumi.dexter.Dexter;
+import com.karumi.dexter.MultiplePermissionsReport;
+import com.karumi.dexter.PermissionToken;
+import com.karumi.dexter.listener.PermissionRequest;
+import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
+import com.karumi.dexter.listener.single.PermissionListener;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class MyUtils {
     public static final String TAG = "TAG";
+
     public static final int DELETE = 0;
     public static final int ADD = 1;
 
@@ -51,6 +64,13 @@ public class MyUtils {
         for (View view : views) {
             view.setVisibility(View.GONE);
             view.setEnabled(false);
+        }
+    }
+
+    public static void showViews(View... views) {
+        for (View view : views) {
+            view.setVisibility(View.VISIBLE);
+            view.setEnabled(true);
         }
     }
 
@@ -97,4 +117,27 @@ public class MyUtils {
                 .setGuidelines(CropImageView.Guidelines.ON)
                 .start(activity);
     }
+
+    public static String getUUID() {
+        UUID uuid = UUID.randomUUID();
+        return uuid.toString();
+    }
+
+    public static DeniedPermissions areAllPermissionsGranted(Context context, String... strings) {
+        boolean isAllGranted = true;
+        DeniedPermissions deniedPermissions = new DeniedPermissions();
+        List<String> ungrantedPermissions = new ArrayList<>();
+        for (String s : strings) {
+            if (ContextCompat.checkSelfPermission(context, s) != PackageManager.PERMISSION_GRANTED) {
+                isAllGranted = false;
+                ungrantedPermissions.add(s);
+            }
+        }
+        deniedPermissions.setAllGranted(isAllGranted);
+        deniedPermissions.setPermissions(ungrantedPermissions);
+
+        return deniedPermissions;
+    }
+
+
 }

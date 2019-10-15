@@ -2,6 +2,8 @@ package com.bliss.chatmate.Utils;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -15,6 +17,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.FragmentActivity;
 
 import com.bliss.chatmate.Activities.SplashScreenActivity;
 import com.bliss.chatmate.Models.DeniedPermissions;
@@ -137,6 +140,11 @@ public class MyUtils {
         deniedPermissions.setPermissions(ungrantedPermissions);
 
         return deniedPermissions;
+    }
+
+    public static void loadFragment(Activity context, Fragment fragment, int frameLayoutID) {
+        FragmentTransaction fragmentTransaction = context.getFragmentManager().beginTransaction().replace(frameLayoutID, fragment);
+        fragmentTransaction.commit();
     }
 
 

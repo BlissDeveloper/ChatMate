@@ -312,6 +312,7 @@ public class ProfileInputActivity extends AppCompatActivity implements OnRegistr
         Log.d(MyUtils.TAG, "Registration successful!");
         MyUtils.showViews(buttonSubmitProfileInput);
         MyUtils.hideViews(progressBarProfileInput);
+        startActivity(new Intent(ProfileInputActivity.this, HomeActivity.class));
     }
 
     @Override
